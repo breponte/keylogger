@@ -10,6 +10,11 @@ using namespace std;
 #define LOG_FILE "logged.txt"
 ofstream outputLog;
 
+/**
+ * Translates the input special key ASCII into a readable output
+ * @param key {char} - key that was pressed
+ * @return {string} - translated special key for output file
+ */
 string outputSpecialKey(char key) {
     string result;
 
@@ -58,6 +63,11 @@ string outputSpecialKey(char key) {
     return result;
 }
 
+/**
+ * Runs infinitely in the background until a forced exit or
+ * ESCAPE key is pressed, logging every input of the user into a .txt file
+ * @return {int} - 0 for exit success
+ */
 int main()
 {
     // array of special keys declared by Win32 header
