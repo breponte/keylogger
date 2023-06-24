@@ -1,6 +1,6 @@
 # use g++ with C++98 support
 CXX=g++
-CXXFLAGS?=-Wall -pedantic -g -O0 -std=c++98
+CXXFLAGS?=-Wall -pedantic -g -O0 -std=c++11
 OUTFILES=key_logger.exe
 
 all:
